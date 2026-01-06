@@ -1,0 +1,8 @@
+### 投稿記事が存在する場合（200 OK）
+@post_id = 6e5eff76-19af-4f1d-9654-d19a578247a1
+GET http://localhost:3000/api/posts/{{post_id}}
+Accept: application/json
+
+### 投稿記事が存在しない場合（404）
+GET http://localhost:3000/api/posts/0000-0000-0000
+Accept: application/json
