@@ -1,0 +1,28 @@
+@post_id = 7b89bc08-7b86-4488-bf8a-67eb5364a549
+
+### 投稿記事 更新成功
+PUT http://localhost:3000/api/admin/posts/{{post_id}}
+Content-Type: application/json
+
+{
+  "title": "投稿Z",
+  "content": "投稿Zの本文。<br/>投稿Zの本文。投稿Zの本文。",
+  "coverImageURL": "https://example.com/z.jpg",
+  "categoryIds": [
+    "c253fc96-9ac9-4bb2-9a5f-2ae16699fc3a",
+    "c4029f80-5dfe-4a96-bbef-d470864f5cd6"
+  ]
+}
+
+### 不正categoryIdsで失敗させる
+PUT http://localhost:3000/api/admin/posts/{{post_id}}
+Content-Type: application/json
+
+{
+  "title": "壊れてはいけない",
+  "content": "もしこれが入ったら失敗",
+  "coverImageURL": "https://bad.com",
+  "categoryIds": [
+    "not-exist-id"
+  ]
+}
