@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation"; // ◀ 注目
 
 import type { Post } from "@/app/_types/Post";
-import dummyPosts from "@/app/_mocks/dummyPosts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
@@ -14,24 +13,43 @@ import DOMPurify from "isomorphic-dompurify";
 const Page: React.FC = () => {
   const [post, setPost] = useState<Post | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   // 動的ルートパラメータから 記事id を取得 （URL:/posts/[id]）
   const { id } = useParams() as { id: string };
 
-  // コンポーネントが読み込まれたときに「1回だけ」実行する処理
+  // API から投稿を取得する処理
   useEffect(() => {
-    // 本来はウェブAPIを叩いてデータを取得するが、まずはモックデータを使用
-    // (ネットからのデータ取得をシミュレートして１秒後にデータをセットする)
-    setIsLoading(true);
-    const timer = setTimeout(() => {
-      console.log("ウェブAPIからデータを取得しました (虚言)");
-      // dummyPosts から id に一致する投稿を取得してセット
-      setPost(dummyPosts.find((post) => post.id === id) || null);
-      setIsLoading(false);
-    }, 1000);
+    const ac = new AbortController();
+    let mounted = true;
 
-    // データ取得の途中でページ遷移したときにタイマーを解除する処理
-    return () => clearTimeout(timer);
+    const fetchPost = async () => {
+      setIsLoading(true);
+      try {
+        const res = await fetch(`/api/posts/${id}`, {
+          method: "GET",
+          cache: "no-store",
+          signal: ac.signal,
+        });
+        if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+        const data = await res.json();
+        const postData = Array.isArray(data) ? data[0] : data;
+        if (mounted) setPost(postData as Post);
+      } catch (e: any) {
+        if (e.name === "AbortError") return;
+        console.error(e);
+        if (mounted) setPost(null);
+      } finally {
+        if (mounted) setIsLoading(false);
+      }
+    };
+
+    fetchPost();
+
+    return () => {
+      mounted = false;
+      ac.abort();
+    };
   }, [id]);
 
   // 投稿データの取得中は「Loading...」を表示
@@ -58,16 +76,22 @@ const Page: React.FC = () => {
     <main>
       <div className="space-y-2">
         <div className="mb-2 text-2xl font-bold">{post.title}</div>
-        <div>
-          <Image
-            src={post.coverImage.url}
-            alt="Example Image"
-            width={post.coverImage.width}
-            height={post.coverImage.height}
-            priority
-            className="rounded-xl"
-          />
-        </div>
+        {post.coverImage && post.coverImage.url ? (
+          <div>
+            <Image
+              src={post.coverImage.url}
+              alt={post.title || "cover"}
+              width={post.coverImage.width || 800}
+              height={post.coverImage.height || 450}
+              priority
+              className="rounded-xl"
+            />
+          </div>
+        ) : (
+          <div className="flex h-48 items-center justify-center rounded-xl bg-gray-100">
+            画像が登録されていません
+          </div>
+        )}
         <div dangerouslySetInnerHTML={{ __html: safeHTML }} />
       </div>
     </main>
