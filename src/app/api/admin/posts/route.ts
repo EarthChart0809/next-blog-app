@@ -11,46 +11,53 @@ type RequestBody = {
 
 export const POST = async (req: NextRequest) => {
   try {
-    const requestBody: RequestBody = await req.json();
+    const { title, content, coverImageURL, categoryIds } =
+      (await req.json()) as RequestBody;
 
-    // 分割代入
-    const { title, content, coverImageURL, categoryIds } = requestBody;
-
-    // categoryIds で指定されるカテゴリがDB上に存在するか確認
     const categories = await prisma.category.findMany({
-      where: {
-        id: {
-          in: categoryIds,
-        },
-      },
+      where: { id: { in: categoryIds } },
     });
     if (categories.length !== categoryIds.length) {
       return NextResponse.json(
         { error: "指定されたカテゴリのいくつかが存在しません" },
-        { status: 400 }, // 400: Bad Request
+        { status: 400 },
       );
     }
 
-    // 投稿記事テーブルにレコードを追加
-    const post: Post = await prisma.post.create({
-      data: {
-        title, // title: title の省略形であることに注意。以下も同様
-        content,
-        coverImageURL,
-      },
+    // トランザクションで投稿と中間テーブルを作成
+    const createdPost = await prisma.$transaction(async (tx) => {
+      const post = await tx.post.create({
+        data: { title, content, coverImageURL },
+      });
+      await Promise.all(
+        categoryIds.map((categoryId) =>
+          tx.postCategory.create({
+            data: { postId: post.id, categoryId },
+          }),
+        ),
+      );
+      return post;
     });
 
-    // 中間テーブルにレコードを追加
-    for (const categoryId of categoryIds) {
-      await prisma.postCategory.create({
-        data: {
-          postId: post.id,
-          categoryId: categoryId,
-        },
-      });
-    }
+    // 作成した投稿をカテゴリ込みで再取得して categories をフラット化して返す
+    const postWithCats = await prisma.post.findUnique({
+      where: { id: createdPost.id },
+      include: { categories: { include: { category: true } } },
+    });
 
-    return NextResponse.json(post);
+    const responseBody = postWithCats
+      ? {
+          id: postWithCats.id,
+          title: postWithCats.title,
+          content: postWithCats.content,
+          coverImageURL: postWithCats.coverImageURL,
+          createdAt: postWithCats.createdAt,
+          updatedAt: postWithCats.updatedAt,
+          categories: postWithCats.categories.map((c) => c.category),
+        }
+      : createdPost;
+
+    return NextResponse.json(responseBody, { status: 201 });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
