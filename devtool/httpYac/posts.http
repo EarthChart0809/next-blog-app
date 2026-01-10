@@ -1,5 +1,5 @@
 ### 投稿記事が存在する場合（200 OK）
-@post_id = 6e5eff76-19af-4f1d-9654-d19a578247a1
+@post_id = 28443eec-b223-4b14-828f-2b927f037158
 GET http://localhost:3000/api/posts/{{post_id}}
 Accept: application/json
 

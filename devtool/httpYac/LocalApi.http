@@ -1,2 +1,13 @@
-### 投稿記事一覧の取得
-GET http://localhost:3000/api/posts
+### 記事の投稿
+POST http://localhost:3000/api/admin/posts
+Content-Type: application/json
+
+{
+  "title": "投稿1",
+  "content": "投稿1の本文。<br/>投稿1の本文。投稿1の本文。",
+  "coverImageURL": "https://....",
+  "categoryIds": [
+    "f791ada3-1b5b-40f7-be8c-a4b0c4a58a01",
+    "e1dde26c-03dd-4688-8b57-3056e04186e0"
+  ]
+}

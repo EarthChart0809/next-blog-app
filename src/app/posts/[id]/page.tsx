@@ -76,16 +76,26 @@ const Page: React.FC = () => {
     <main>
       <div className="space-y-2">
         <div className="mb-2 text-2xl font-bold">{post.title}</div>
-        {post.coverImage && post.coverImage.url ? (
+        {(post.coverImage && post.coverImage.url) || post.coverImageURL ? (
           <div>
-            <Image
-              src={post.coverImage.url}
-              alt={post.title || "cover"}
-              width={post.coverImage.width || 800}
-              height={post.coverImage.height || 450}
-              priority
-              className="rounded-xl"
-            />
+            {post.coverImage && post.coverImage.url ? (
+              <Image
+                src={post.coverImage.url}
+                alt={post.title || "cover"}
+                width={post.coverImage.width || 800}
+                height={post.coverImage.height || 450}
+                priority
+                className="rounded-xl"
+              />
+            ) : (
+              <img
+                src={post.coverImageURL}
+                alt={post.title || "cover"}
+                width={800}
+                height={450}
+                className="w-full rounded-xl object-cover"
+              />
+            )}
           </div>
         ) : (
           <div className="flex h-48 items-center justify-center rounded-xl bg-gray-100">
