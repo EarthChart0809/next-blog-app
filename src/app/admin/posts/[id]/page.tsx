@@ -14,6 +14,7 @@ export default function Page() {
   const [coverImageURL, setCoverImageURL] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
   const [checked, setChecked] = useState<string[]>([]);
+  const [published, setPublished] = useState(false); // 追加
 
   useEffect(() => {
     (async () => {
@@ -24,6 +25,7 @@ export default function Page() {
       setContent(post.content);
       setCoverImageURL(post.coverImageURL);
       setChecked(post.categories.map((c: Category) => c.id));
+      setPublished(Boolean(post.published)); 
 
       const c = await fetch("/api/categories").then((r) => r.json());
       setCategories(c);
@@ -40,6 +42,7 @@ export default function Page() {
         content,
         coverImageURL,
         categoryIds: checked,
+        published, 
       }),
     });
     alert("保存しました");
@@ -89,6 +92,15 @@ export default function Page() {
           </label>
         ))}
       </div>
+
+      <label className="inline-flex items-center gap-2">
+        <input
+          type="checkbox"
+          checked={published}
+          onChange={(e) => setPublished(e.target.checked)}
+        />
+        公開する
+      </label>
 
       <div className="flex gap-4">
         <button onClick={save} className="bg-indigo-500 px-4 py-2 text-white">

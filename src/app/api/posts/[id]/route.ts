@@ -27,6 +27,7 @@ export async function GET(
       coverImageURL: post.coverImageURL,
       createdAt: post.createdAt,
       updatedAt: post.updatedAt,
+      published: post.published, // 編集画面で初期チェック状態を取得する
       categories: post.categories.map((c) => c.category),
     });
   } catch (error) {

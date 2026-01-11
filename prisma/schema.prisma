@@ -22,6 +22,8 @@ model Post {
   coverImageURL  String
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+  order         Int      @default(0) // ドラッグ対応
+  published     Boolean  @default(false) // 公開フラグ（false = 下書き）
   categories     PostCategory[]
 }
 

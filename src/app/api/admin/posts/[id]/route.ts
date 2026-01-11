@@ -10,6 +10,7 @@ type RequestBody = {
   content: string;
   coverImageURL: string;
   categoryIds: string[];
+  published?: boolean; 
 };
 
 export const PUT = async (req: NextRequest, routeParams: RouteParams) => {
@@ -43,6 +44,7 @@ export const PUT = async (req: NextRequest, routeParams: RouteParams) => {
           title: body.title,
           content: body.content,
           coverImageURL: body.coverImageURL,
+          published: body.published ?? false, // 公開フラグ更新
         },
       });
     });
@@ -66,6 +68,7 @@ export const PUT = async (req: NextRequest, routeParams: RouteParams) => {
       coverImageURL: postWithCats.coverImageURL,
       createdAt: postWithCats.createdAt,
       updatedAt: postWithCats.updatedAt,
+      published: postWithCats.published, // 追加
       categories: postWithCats.categories.map((c) => c.category),
     });
   } catch (error) {

@@ -7,61 +7,44 @@ type RequestBody = {
   content: string;
   coverImageURL: string;
   categoryIds: string[];
+  published?: boolean;
 };
 
-export const POST = async (req: NextRequest) => {
+export const GET = async (req: NextRequest) => {
   try {
-    const { title, content, coverImageURL, categoryIds } =
-      (await req.json()) as RequestBody;
-
-    const categories = await prisma.category.findMany({
-      where: { id: { in: categoryIds } },
-    });
-    if (categories.length !== categoryIds.length) {
-      return NextResponse.json(
-        { error: "指定されたカテゴリのいくつかが存在しません" },
-        { status: 400 },
-      );
-    }
-
-    // トランザクションで投稿と中間テーブルを作成
-    const createdPost = await prisma.$transaction(async (tx) => {
-      const post = await tx.post.create({
-        data: { title, content, coverImageURL },
-      });
-      await Promise.all(
-        categoryIds.map((categoryId) =>
-          tx.postCategory.create({
-            data: { postId: post.id, categoryId },
-          }),
-        ),
-      );
-      return post;
+    const posts = await prisma.post.findMany({
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        createdAt: true,
+        updatedAt: true,
+        order: true,
+        published: true,
+        categories: {
+          select: {
+            category: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: { order: "asc" },
     });
 
-    // 作成した投稿をカテゴリ込みで再取得して categories をフラット化して返す
-    const postWithCats = await prisma.post.findUnique({
-      where: { id: createdPost.id },
-      include: { categories: { include: { category: true } } },
-    });
+    const flattened = posts.map((p) => ({
+      ...p,
+      categories: p.categories.map((pc) => pc.category),
+    }));
 
-    const responseBody = postWithCats
-      ? {
-          id: postWithCats.id,
-          title: postWithCats.title,
-          content: postWithCats.content,
-          coverImageURL: postWithCats.coverImageURL,
-          createdAt: postWithCats.createdAt,
-          updatedAt: postWithCats.updatedAt,
-          categories: postWithCats.categories.map((c) => c.category),
-        }
-      : createdPost;
-
-    return NextResponse.json(responseBody, { status: 201 });
+    return NextResponse.json(flattened);
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: "投稿記事の作成に失敗しました" },
+      { error: "投稿記事の一覧の取得に失敗しました" },
       { status: 500 },
     );
   }

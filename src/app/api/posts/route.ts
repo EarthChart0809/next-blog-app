@@ -1,15 +1,18 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse, NextRequest } from "next/server";
-import { Post } from "@/generated/prisma/client";
 
 export const GET = async (req: NextRequest) => {
   try {
     const posts = await prisma.post.findMany({
+      where: { published: true }, // 公開済みのみ返す
       select: {
         id: true,
         title: true,
         content: true,
         createdAt: true,
+        updatedAt: true,
+        order: true,
+        published: true,
         categories: {
           select: {
             category: {
@@ -21,10 +24,9 @@ export const GET = async (req: NextRequest) => {
           },
         },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { order: "asc" },
     });
 
-    // categories をフラット化して返す
     const flattened = posts.map((p) => ({
       ...p,
       categories: p.categories.map((pc) => pc.category),
