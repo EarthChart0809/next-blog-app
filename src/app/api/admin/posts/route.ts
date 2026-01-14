@@ -38,6 +38,8 @@ export const GET = async (req: NextRequest) => {
     const flattened = posts.map((p) => ({
       ...p,
       categories: p.categories.map((pc) => pc.category),
+      // 追加: クライアントでカテゴリ一致判定できるように ID 配列を返す
+      categoryIds: p.categories.map((pc) => pc.category.id),
     }));
 
     return NextResponse.json(flattened);

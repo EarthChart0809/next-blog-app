@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { twMerge } from "tailwind-merge";
 
 type Category = { id: string; name: string };
 
@@ -25,7 +26,7 @@ export default function Page() {
       setContent(post.content);
       setCoverImageURL(post.coverImageURL);
       setChecked(post.categories.map((c: Category) => c.id));
-      setPublished(Boolean(post.published)); 
+      setPublished(Boolean(post.published));
 
       const c = await fetch("/api/categories").then((r) => r.json());
       setCategories(c);
@@ -42,7 +43,7 @@ export default function Page() {
         content,
         coverImageURL,
         categoryIds: checked,
-        published, 
+        published,
       }),
     });
     alert("保存しました");
@@ -103,10 +104,24 @@ export default function Page() {
       </label>
 
       <div className="flex gap-4">
-        <button onClick={save} className="bg-indigo-500 px-4 py-2 text-white">
+        <button
+          type="button"
+          onClick={save}
+          className={twMerge(
+            "rounded-md px-5 py-1 font-bold",
+            "bg-indigo-500 text-white hover:bg-indigo-600",
+          )}
+        >
           保存
         </button>
-        <button onClick={remove} className="bg-red-500 px-4 py-2 text-white">
+        <button
+          type="button"
+          onClick={remove}
+          className={twMerge(
+            "rounded-md px-5 py-1 font-bold",
+            "bg-red-500 text-white hover:bg-red-600",
+          )}
+        >
           削除
         </button>
       </div>
