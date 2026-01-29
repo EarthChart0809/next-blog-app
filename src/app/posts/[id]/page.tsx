@@ -35,8 +35,8 @@ const Page: React.FC = () => {
         const data = await res.json();
         const postData = Array.isArray(data) ? data[0] : data;
         if (mounted) setPost(postData as Post);
-      } catch (e: any) {
-        if (e.name === "AbortError") return;
+      } catch (e: unknown) {
+        if (e instanceof Error && e.name === "AbortError") return;
         console.error(e);
         if (mounted) setPost(null);
       } finally {
@@ -80,7 +80,7 @@ const Page: React.FC = () => {
           <div>
             {post.coverImage && post.coverImage.url ? (
               <Image
-                src={post.coverImage.url}
+                src={post.coverImage.url!}
                 alt={post.title || "cover"}
                 width={post.coverImage.width || 800}
                 height={post.coverImage.height || 450}
@@ -88,8 +88,8 @@ const Page: React.FC = () => {
                 className="rounded-xl"
               />
             ) : (
-              <img
-                src={post.coverImageURL}
+              <Image
+                src={post.coverImageURL!}
                 alt={post.title || "cover"}
                 width={800}
                 height={450}

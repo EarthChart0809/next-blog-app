@@ -22,16 +22,38 @@ export default function Page() {
       const postsRes = await fetch("/api/admin/posts", { cache: "no-store" });
       if (postsRes.ok) {
         const posts = await postsRes.json();
-        (posts as any[]).forEach((p) => {
-          const ids: string[] =
-            p.categoryIds ??
-            (Array.isArray(p.categories)
-              ? p.categories.map((c: any) => c.id)
-              : []);
-          ids.forEach((cid) => {
-            counts[cid] = (counts[cid] || 0) + 1;
-          });
-        });
+        if (Array.isArray(posts)) {
+          for (const p of posts) {
+            let ids: string[] = [];
+
+            if (
+              p &&
+              typeof p === "object" &&
+              Array.isArray((p as { categoryIds?: unknown }).categoryIds)
+            ) {
+              ids = (p as { categoryIds: string[] }).categoryIds;
+            } else if (
+              p &&
+              typeof p === "object" &&
+              Array.isArray((p as { categories?: unknown }).categories)
+            ) {
+              const catsArr = (p as { categories: unknown[] }).categories;
+              for (const c of catsArr) {
+                if (
+                  c &&
+                  typeof c === "object" &&
+                  typeof (c as { id?: unknown }).id === "string"
+                ) {
+                  ids.push((c as { id: string }).id);
+                }
+              }
+            }
+
+            ids.forEach((cid) => {
+              counts[cid] = (counts[cid] || 0) + 1;
+            });
+          }
+        }
       }
     } catch {
       // silent

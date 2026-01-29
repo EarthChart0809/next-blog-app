@@ -14,24 +14,37 @@ const Page: React.FC = () => {
       try {
         const request = "/api/posts";
         const res = await fetch(request, {
-        method: "GET",
-        cache: "no-store",
-      });
+          method: "GET",
+          cache: "no-store",
+        });
         if (!res.ok) {
-        setPosts(null);
-        throw new Error(`${res.status}: ${res.statusText}`); // -> catch節に移動
-      }
+          setPosts(null);
+          throw new Error(`${res.status}: ${res.statusText}`);
+        }
         const data = await res.json();
-        const postsData = Array.isArray(data) ? data : (data as any).contents;
-        setPosts(postsData as Post[]);
-      } catch (e) {
+
+        let postsData: Post[] = [];
+        if (Array.isArray(data)) {
+          postsData = data;
+        } else if (
+          data &&
+          typeof data === "object" &&
+          Array.isArray((data as { contents?: unknown }).contents)
+        ) {
+          postsData = (data as { contents: Post[] }).contents;
+        } else {
+          postsData = [];
+        }
+
+        setPosts(postsData);
+      } catch (e: unknown) {
         setFetchError(
           e instanceof Error ? e.message : "予期せぬエラーが発生しました",
         );
       }
     };
     fetchPosts();
-  },[] );
+  }, []);
 
   if (fetchError) {
     return <div>{fetchError}</div>;
