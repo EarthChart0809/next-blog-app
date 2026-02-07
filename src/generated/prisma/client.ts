@@ -54,3 +54,8 @@ export type Category = Prisma.CategoryModel
  * 
  */
 export type PostCategory = Prisma.PostCategoryModel
+/**
+ * Model Task
+ * 
+ */
+export type Task = Prisma.TaskModel
