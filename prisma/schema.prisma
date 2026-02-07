@@ -48,9 +48,14 @@ model PostCategory {
 }
 
 model Task {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   title     String
   date      DateTime
+  type      TaskType
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+}
+
+enum TaskType {
+  CONTEST
+  EVENT
 }

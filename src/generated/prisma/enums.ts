@@ -9,7 +9,9 @@
 * 🟢 You can import this file directly.
 */
 
+export const TaskType = {
+  CONTEST: 'CONTEST',
+  EVENT: 'EVENT'
+} as const
 
-
-// This file is empty because there are no enums in the schema.
-export {}
+export type TaskType = (typeof TaskType)[keyof typeof TaskType]

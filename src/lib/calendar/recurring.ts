@@ -1,4 +1,4 @@
-import { CalendarEvent } from "@/types/calendar";
+import { CalendarEvent } from "@/app/_types/calendar";
 
 export function generateBiWeeklyMeetings(
   year: number,
