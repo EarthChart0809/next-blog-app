@@ -3,6 +3,8 @@ import { getMonthMatrix } from "@/lib/calendar/date";
 import { generateBiWeeklyMeetings } from "@/lib/calendar/recurring";
 import { fetchTasks } from "@/lib/tasks/fetchTasks";
 import type { CalendarEvent } from "@/app/_types/calendar";
+import TaskDetailModal from "@/app/_components/calendar/TaskDetailModal";
+import { Task } from "@/app/_types/task";
 
 type Props = {
   year: number;
@@ -15,6 +17,7 @@ const weekLabels = ["日", "月", "火", "水", "木", "金", "土"];
 
 export function Calendar({ year, month, onPrev, onNext }: Props) {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [selectedTask, setSelectedTask] = useState<CalendarEvent | null>(null);
   const weeks = getMonthMatrix(year, month);
 
   useEffect(() => {
@@ -79,7 +82,8 @@ export function Calendar({ year, month, onPrev, onNext }: Props) {
                 {dayEvents.map((e) => (
                   <span
                     key={e.id}
-                    className={`block rounded-full px-2 py-0.5 text-xs ${
+                    onClick={() => setSelectedTask(e)}
+                    className={`block cursor-pointer rounded-full px-2 py-0.5 text-xs ${
                       e.type === "meeting" ? "bg-blue-100 text-blue-700" : ""
                     } ${e.type === "contest" ? "bg-red-100 text-red-700" : ""} ${
                       e.type === "custom" ? "bg-green-100 text-green-700" : ""
@@ -93,6 +97,11 @@ export function Calendar({ year, month, onPrev, onNext }: Props) {
           );
         })}
       </div>
+
+      <TaskDetailModal
+        task={selectedTask}
+        onClose={() => setSelectedTask(null)}
+      />
     </div>
   );
 }
