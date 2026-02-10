@@ -1,52 +1,63 @@
 "use client";
 import Link from "next/link";
-import { twMerge } from "tailwind-merge";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFish } from "@fortawesome/free-solid-svg-icons";
-import { supabase } from "@/utils/supabase"; // ◀ 追加
-import { useAuth } from "@/app/_hooks/useAuth"; // ◀ 追加
-import { useRouter } from "next/navigation"; // ◀ 追加
+import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { supabase } from "@/utils/supabase";
+import { useAuth } from "@/app/_hooks/useAuth";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const Header: React.FC = () => {
-  // ▼ 追加
   const router = useRouter();
   const { isLoading, session } = useAuth();
+  const [open, setOpen] = useState(false);
+
   const logout = async () => {
     await supabase.auth.signOut();
     router.replace("/");
   };
-  // ▲ 追加
 
   return (
-    <header>
-      <div className="bg-slate-800 py-2">
-        <div
-          className={twMerge(
-            "mx-4 max-w-2xl md:mx-auto",
-            "flex items-center justify-between",
-            "text-lg font-bold text-white",
-          )}
-        >
-          <div>
-            <Link href="/">
-              <FontAwesomeIcon icon={faFish} className="mr-1" />
-              MyBlogApp
+    <>
+      {/* 右上メニューアイコン */}
+      <button
+        onClick={() => setOpen(!open)}
+        className="fixed top-4 right-4 z-50 text-black hover:opacity-70"
+      >
+        <FontAwesomeIcon icon={faBars} size="lg" />
+      </button>
+
+      {/* メニューパネル */}
+      {open && (
+        <div className="fixed top-14 right-4 z-40 w-48 border border-black bg-white text-sm">
+          <nav className="flex flex-col">
+            <Link href="/" className="px-4 py-2 hover:bg-gray-100">
+              Home
             </Link>
-          </div>
-          <div className="flex gap-x-6">
-            {/* ▼ 追加 */}
+            <Link href="/about" className="px-4 py-2 hover:bg-gray-100">
+              部活紹介
+            </Link>
+            <Link href="/schedule" className="px-4 py-2 hover:bg-gray-100">
+              活動スケジュール
+            </Link>
+
             {!isLoading &&
               (session ? (
-                <button onClick={logout}>Logout</button>
+                <button
+                  onClick={logout}
+                  className="px-4 py-2 text-left hover:bg-gray-100"
+                >
+                  Logout
+                </button>
               ) : (
-                <Link href="/login">Login</Link>
+                <Link href="/login" className="px-4 py-2 hover:bg-gray-100">
+                  Login
+                </Link>
               ))}
-            {/* ▲ 追加 */}
-            <Link href="/about">About</Link>
-          </div>
+          </nav>
         </div>
-      </div>
-    </header>
+      )}
+    </>
   );
 };
 

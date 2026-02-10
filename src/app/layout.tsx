@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Header from "@/app/_components/Header";
+import SideNav from "@/app/_components/SideNav";
 
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
 config.autoAddCss = false;
-
 
 export const metadata: Metadata = {
   title: "NextBlogApp",
@@ -20,9 +19,9 @@ const RootLayout: React.FC<Props> = (props) => {
   const { children } = props;
   return (
     <html lang="ja">
-      <body>
-        <Header />
-        <div className="mx-4 mt-2 max-w-2xl md:mx-auto">{children}</div>
+      <body >
+        <SideNav />
+        <main className="mx-4 mt-2 max-w-2xl md:mx-auto">{children}</main>
       </body>
     </html>
   );
