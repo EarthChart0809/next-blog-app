@@ -5,7 +5,7 @@ import { supabase } from "@/utils/supabase";
 import { usernameToEmail } from "@/lib/auth/usernameEmail";
 import { useRouter } from "next/navigation";
 
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -17,22 +17,22 @@ export default function LoginPage() {
 
     const email = usernameToEmail(username);
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
     });
 
     if (error) {
-      setError("ユーザー名またはパスワードが違います");
+      setError(error.message);
       return;
     }
 
-    router.push("/admin");
+    router.push("/login");
   };
 
   return (
     <main className="mx-auto max-w-sm py-16">
-      <h1 className="mb-6 text-center text-xl font-bold">ログイン</h1>
+      <h1 className="mb-6 text-center text-xl font-bold">新規登録</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
@@ -51,7 +51,7 @@ export default function LoginPage() {
 
         {error && <p className="text-sm text-red-500">{error}</p>}
 
-        <button className="w-full border py-2">ログイン</button>
+        <button className="w-full border py-2">登録</button>
       </form>
     </main>
   );

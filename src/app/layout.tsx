@@ -19,9 +19,11 @@ const RootLayout: React.FC<Props> = (props) => {
   const { children } = props;
   return (
     <html lang="ja">
-      <body >
+      <body>
         <SideNav />
-        <main className="mx-4 mt-2 max-w-2xl md:mx-auto">{children}</main>
+        <div className="md:pl-14">
+          <main className="mx-auto mt-2 max-w-2xl px-4">{children}</main>
+        </div>
       </body>
     </html>
   );
