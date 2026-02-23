@@ -115,13 +115,19 @@ export default function TaskAdminPage() {
           </ul>
         )}
       </section>
-      <section>
+      <section className="w-[280px] space-y-3 border border-black p-4">
+        <h2 className="text-sm font-semibold text-black">七セグ表示の基準日</h2>
+
         <input
           type="date"
-          className="border p-2"
           value={date}
           onChange={(e) => setDate(e.target.value)}
+          className="w-full border border-gray-300 px-2 py-1.5 text-sm text-black focus:border-black focus:outline-none"
         />
+
+        <p className="text-xs text-gray-500">
+          カレンダー上部の残り日数表示に反映されます
+        </p>
       </section>
     </div>
   );

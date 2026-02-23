@@ -12,14 +12,26 @@ export default function TaskEditPage() {
   const [type, setType] = useState("MEETING");
 
   useEffect(() => {
+    if (!id) return;
+
     fetch(`/api/admin/tasks/${id}`)
-      .then((res) => res.json())
+      .then(async (res) => {
+        if (!res.ok) {
+          throw new Error("Task not found");
+        }
+        return res.json();
+      })
       .then((task) => {
         setTitle(task.title);
         setStartAt(task.startAt.slice(0, 16));
         setType(task.type);
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("タスクの取得に失敗しました");
+        router.push("/admin/tasks");
       });
-  }, [id]);
+  }, [id, router]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

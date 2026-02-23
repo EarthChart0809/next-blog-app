@@ -25,9 +25,9 @@ export default function LoginPage() {
       return;
     }
 
-    // // 成功したらダッシュボードへ遷移
-    // router.push("/dashboard");
-    // setLoading(false);
+    // 成功したらダッシュボードへ遷移
+    router.push("/admin");
+    setLoading(false);
   };
 
   return (

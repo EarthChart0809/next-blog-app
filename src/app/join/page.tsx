@@ -2,6 +2,7 @@
 import { useState } from "react";
 import DivisionCard from "@/app/_components/DivisionCard";
 import FadeInSection from "@/app/_components/FadeInSection";
+import Link from "next/link";
 
 export default function JoinPage() {
   const pdfOptions = [
@@ -53,7 +54,7 @@ export default function JoinPage() {
       </section>
 
       {/* 道具紹介 */}
-       <section className="grid gap-8 md:grid-cols-3">
+      <section className="grid gap-8 md:grid-cols-3">
         <FadeInSection>
           <DivisionCard
             title="機構班"
@@ -78,7 +79,7 @@ export default function JoinPage() {
           />
         </FadeInSection>
       </section>
-    
+
       {/* 体験入部資料 */}
       <section>
         <h2 className="text-xl font-bold">体験入部資料</h2>
@@ -137,6 +138,22 @@ export default function JoinPage() {
             ))}
           </div>
         )}
+      </section>
+      <section className="mx-auto mt-8 w-full max-w-md border border-gray-200 p-5 text-center">
+        <h2 className="mb-2 text-lg font-semibold text-black">
+          体験入部を終えた方へ
+        </h2>
+
+        <p className="mb-4 text-xs text-gray-500">
+          今後の活動改善の参考にさせていただきます。
+        </p>
+
+        <Link
+          href="/admin/posts/new"
+          className="block w-full border border-black bg-black py-2 text-sm text-white transition hover:bg-white hover:text-black"
+        >
+          感想フォームはこちら
+        </Link>
       </section>
     </main>
   );

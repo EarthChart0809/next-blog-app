@@ -1,31 +1,42 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faFish,
   faHome,
   faCalendarDays,
   faUsers,
   faFileLines,
   faRightFromBracket,
   faGear,
-  faBook
+  faBook,
+  faUserGear,
 } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "@/app/_hooks/useAuth";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase/client";
 
 const navItems = [
-  { href: "/", icon: faHome, title: "トップ" },
+  { href: "/entry", icon: faHome, title: "エントリー" },
   { href: "/calendar", icon: faCalendarDays, title: "活動スケジュール" },
   { href: "/about", icon: faUsers, title: "部活紹介" },
   { href: "/join", icon: faFileLines, title: "体験入部" },
-  { href: "/profile", icon: faGear, title: "設定" },
+  { href: "/profile", icon: faUserGear, title: "プロフィール" },
   { href: "/groups", icon: faBook, title: "登録者一覧" },
+  { href: "/admin", icon: faGear, title: "管理者用機能" },
 ];
 
-const SideNav = () => {
+export default function SideNav() {
+  const pathname = usePathname();
+  // pathname が取得できない（サーバー側レンダリング等）や特定パスでは非表示
+  if (!pathname) return null;
+  if (
+    pathname === "/" ||
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/signup")
+  )
+    return null;
+
   const router = useRouter();
   const { isLoading, session } = useAuth();
 
@@ -39,29 +50,15 @@ const SideNav = () => {
   return (
     <>
       <nav className="hidden md:fixed md:top-0 md:left-0 md:z-50 md:flex md:h-screen md:w-14 md:flex-col md:items-center md:gap-6 md:border-r md:border-black md:bg-white md:pt-4">
-        {/* ロゴ */}
-        <Link href="/profile" title="設定" className="mb-4">
-          <FontAwesomeIcon icon={faGear} />
-        </Link>
-        <Link href="/" title="トップ">
-          <FontAwesomeIcon icon={faHome} />
-        </Link>
-        <Link href="/calendar" title="活動スケジュール">
-          <FontAwesomeIcon icon={faCalendarDays} />
-        </Link>
-        <Link href="/about" title="部活紹介">
-          <FontAwesomeIcon icon={faUsers} />
-        </Link>
-        <Link href="/join" title="体験入部">
-          <FontAwesomeIcon icon={faFileLines} />
-        </Link>
-        <Link href="/groups" title="登録者一覧">
-          <FontAwesomeIcon icon={faBook} />
-        </Link>
+
+        {navItems.map((item) => (
+          <Link key={item.href} href={item.href} title={item.title}>
+            <FontAwesomeIcon icon={item.icon} />
+          </Link>
+        ))}
 
         {session ? (
           <button
-            type="button"
             onClick={logout}
             title="Logout"
             aria-label="Logout"
@@ -76,9 +73,6 @@ const SideNav = () => {
         )}
       </nav>
 
-      {/* =====================
-            スマホ：下ナビ
-      ===================== */}
       <nav className="fixed bottom-0 left-0 z-50 flex h-14 w-full items-center justify-around border-t border-black bg-white md:hidden">
         {navItems.map((item) => (
           <Link
@@ -93,11 +87,10 @@ const SideNav = () => {
 
         {session ? (
           <button
-            type="button"
             onClick={logout}
+            className="flex flex-col items-center text-xs"
             title="Logout"
             aria-label="Logout"
-            className="flex flex-col items-center text-xs"
           >
             <FontAwesomeIcon icon={faRightFromBracket} />
           </button>
@@ -113,6 +106,4 @@ const SideNav = () => {
       </nav>
     </>
   );
-};
-
-export default SideNav;
+}

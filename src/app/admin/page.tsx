@@ -1,40 +1,32 @@
 "use client";
+
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 const Page: React.FC = () => {
   return (
-    <main>
-      <div className="mb-2 text-2xl font-bold">管理者用機能の一覧</div>
-      <ul>
-        <li>
-          <FontAwesomeIcon icon={faArrowRight} className="mr-2" />
-          <Link className="text-blue-500 underline" href="/admin/posts">
-            /admin/posts
-          </Link>
-        </li>
-        <li>
-          <FontAwesomeIcon icon={faArrowRight} className="mr-2" />
-          <Link className="text-blue-500 underline" href="/admin/posts/new">
-            /admin/posts/new
-          </Link>
-        </li>
-        <li>
-          <FontAwesomeIcon icon={faArrowRight} className="mr-2" />
-          <Link className="text-blue-500 underline" href="/admin/categories">
-            /admin/categories
-          </Link>
-        </li>
-        <li>
-          <FontAwesomeIcon icon={faArrowRight} className="mr-2" />
-          <Link
-            className="text-blue-500 underline"
-            href="/admin/categories/new"
-          >
-            /admin/categories/new
-          </Link>
-        </li>
+    <main className="mx-auto max-w-md p-6">
+      <h1 className="mb-4 text-lg font-semibold text-black">管理者用機能</h1>
+
+      <ul className="space-y-2">
+        {[
+          { href: "/admin/posts", label: "投稿一覧" },
+          { href: "/admin/posts/new", label: "新規投稿作成" },
+          { href: "/admin/categories", label: "カテゴリ管理" },
+          { href: "/admin/categories/new", label: "カテゴリ追加" },
+          { href: "/admin/tasks", label: "タスク管理" },
+        ].map((item) => (
+          <li key={item.href}>
+            <Link
+              href={item.href}
+              className="flex items-center justify-between rounded border border-black px-4 py-2 text-sm text-black transition hover:bg-black hover:text-white"
+            >
+              <span>{item.label}</span>
+              <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
+            </Link>
+          </li>
+        ))}
       </ul>
     </main>
   );

@@ -71,18 +71,6 @@ export default function CalendarPage() {
         onPrev={() => dispatch("prev")}
         onNext={() => dispatch("next")}
       />
-
-      <div className="w-[320px] space-y-4">
-       {/* 既存の表示名などの UI をここに残す */}
-       {/* 管理画面への遷移ボタン */}
-        <Link
-          href="/admin"
-          className="block w-full rounded border border-black bg-black px-4 py-2 text-center text-sm text-white hover:bg-white hover:text-black"
-        >
-          タスク管理 (Admin)
-        </Link>
-      </div>
-
     </div>
     
   );
