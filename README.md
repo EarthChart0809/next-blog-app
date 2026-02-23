@@ -113,4 +113,4 @@ https://next-blog-app-fukaken.vercel.app/
 
 ## 連絡先（任意）
 
-- Portfolio / SNS 等のリンクをここに記載してください。
+https://earthchart0809.github.io/Portfolio/
