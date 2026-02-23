@@ -1,5 +1,5 @@
-import { supabase } from "@/lib/supabase/client";
-import { ROLE_LABEL } from "@/lib/role";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { ROLE_LABEL } from "@/lib/member_role";
 import { notFound } from "next/navigation";
 
 type Props = {
@@ -12,10 +12,11 @@ export default async function GroupDetailPage({ params }: Props) {
   const roleInfo = Object.entries(ROLE_LABEL).find(([key]) => key === role);
   if (!roleInfo) notFound();
 
+  const supabase = await createSupabaseServerClient();
   const { data: members } = await supabase
     .from("profiles")
-    .select("display_name")
-    .eq("role", role)
+    .select("display_name, created_at")
+    .eq("member_role", role)
     .order("created_at", { ascending: true });
 
   return (

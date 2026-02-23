@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     id: user.id,
     login_id: loginId,
     display_name: displayName,
-    group,
+    member_role: group,
   });
 
   if (error) {

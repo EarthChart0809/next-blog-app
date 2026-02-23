@@ -15,6 +15,12 @@ export default function SignupPage() {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          display_name,
+          member_role: "none",
+        },
+      },
     });
 
     if (error) {
@@ -35,21 +41,38 @@ export default function SignupPage() {
   };
 
   return (
-    <div>
+  <div className="min-h-screen flex items-center justify-center bg-white">
+    <div className="w-[280px] border border-gray-200 p-5 shadow-sm">
+      <h1 className="mb-4 text-center text-lg font-medium text-black">
+        Sign Up
+      </h1>
+
       <input
+        className="mb-3 w-full border border-gray-300 px-2 py-1.5 text-sm text-black placeholder-gray-400 focus:border-black focus:outline-none"
         placeholder="ログインID"
         onChange={(e) => setLoginId(e.target.value)}
       />
+
       <input
+        className="mb-3 w-full border border-gray-300 px-2 py-1.5 text-sm text-black placeholder-gray-400 focus:border-black focus:outline-none"
         placeholder="表示名"
         onChange={(e) => setDisplayName(e.target.value)}
       />
+
       <input
         type="password"
+        className="mb-4 w-full border border-gray-300 px-2 py-1.5 text-sm text-black placeholder-gray-400 focus:border-black focus:outline-none"
         placeholder="パスワード"
         onChange={(e) => setPassword(e.target.value)}
       />
-      <button onClick={handleSignup}>登録</button>
+
+      <button
+        onClick={handleSignup}
+        className="w-full border border-black bg-black py-1.5 text-sm text-white transition hover:bg-white hover:text-black"
+      >
+        登録
+      </button>
     </div>
-  );
+  </div>
+);
 }

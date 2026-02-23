@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ROLE_LABEL } from "@/lib/role";
+import { ROLE_LABEL } from "@/lib/member_role";
 
 export default function GroupsPage() {
   return (
