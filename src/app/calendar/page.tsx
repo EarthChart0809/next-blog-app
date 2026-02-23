@@ -1,7 +1,10 @@
 "use client";
 
-import { useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { Calendar } from "@/app/_components/calendar/Calendar";
+import { SevenSeg } from "@/app/_components/calendar/SevenSeg";
+import { supabase } from "@/lib/supabase/client";
+import Link from "next/link";
 
 type State = { year: number; month: number };
 
@@ -21,12 +24,66 @@ export default function CalendarPage() {
     { year: today.getFullYear(), month: today.getMonth() },
   );
 
+  const [daysLeft, setDaysLeft] = useState<number | null>(null);
+  const [title, setTitle] = useState<string>("");
+
+  useEffect(() => {
+    const fetchContest = async () => {
+      const todayStr = new Date().toISOString().slice(0, 10);
+
+      const { data } = await supabase
+        .from("Task")
+        .select("title, date")
+        .eq("type", "CONTEST")
+        .gte("date", todayStr)
+        .order("date", { ascending: true })
+        .limit(1)
+        .single();
+
+      if (!data) return;
+
+      const target = new Date(data.date);
+      const diff = Math.ceil(
+        (target.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24),
+      );
+
+      setDaysLeft(diff);
+      setTitle(data.title);
+    };
+
+    fetchContest();
+  }, []);
+
   return (
-    <Calendar
-      year={state.year}
-      month={state.month}
-      onPrev={() => dispatch("prev")}
-      onNext={() => dispatch("next")}
-    />
+    <div className="space-y-6">
+      {daysLeft !== null && (
+        <div className="text-center">
+          <p className="mb-2 text-xs tracking-widest text-gray-500">
+            {title} まで
+          </p>
+          <SevenSeg value={daysLeft} />
+        </div>
+      )}
+
+      <Calendar
+        year={state.year}
+        month={state.month}
+        onPrev={() => dispatch("prev")}
+        onNext={() => dispatch("next")}
+      />
+
+      <div className="w-[320px] space-y-4">
+       {/* 既存の表示名などの UI をここに残す */}
+       {/* 管理画面への遷移ボタン */}
+        <Link
+          href="/admin"
+          className="block w-full rounded border border-black bg-black px-4 py-2 text-center text-sm text-white hover:bg-white hover:text-black"
+        >
+          タスク管理 (Admin)
+        </Link>
+      </div>
+
+    </div>
+    
   );
 }

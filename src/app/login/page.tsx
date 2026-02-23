@@ -2,12 +2,16 @@
 
 import { supabase } from "@/lib/supabase/client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
+    setLoading(true);
     const email = `${loginId}@fukaken.local`;
 
     const { error } = await supabase.auth.signInWithPassword({
@@ -16,8 +20,14 @@ export default function LoginPage() {
     });
 
     if (error) {
+      setLoading(false);
       alert("ログイン失敗");
+      return;
     }
+
+    // // 成功したらダッシュボードへ遷移
+    // router.push("/dashboard");
+    // setLoading(false);
   };
 
   return (
@@ -42,9 +52,10 @@ export default function LoginPage() {
 
         <button
           onClick={handleLogin}
-          className="w-full border border-black bg-black py-1.5 text-sm text-white transition hover:bg-white hover:text-black"
+          disabled={loading}
+          className="w-full border border-black bg-black py-1.5 text-sm text-white transition hover:bg-white hover:text-black disabled:opacity-50"
         >
-          ログイン
+          {loading ? "ログイン中..." : "ログイン"}
         </button>
       </div>
     </div>

@@ -37,68 +37,92 @@ export default function TaskAdminPage() {
   }
 
   return (
-    <div className="space-y-4 p-6">
-      <h1 className="text-xl font-bold">Task追加</h1>
+    <div className="mx-auto max-w-xl space-y-8 p-6 text-sm text-black">
+      {/* ===== Task追加 ===== */}
+      <section className="space-y-4 border border-gray-200 p-4">
+        <h1 className="text-base font-semibold">Task追加</h1>
 
-      <input
-        className="border p-2"
-        placeholder="タイトル"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
+        <input
+          className="w-full border border-gray-300 px-2 py-1.5 focus:border-black focus:outline-none"
+          placeholder="タイトル"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
 
-      <input
-        type="date"
-        className="border p-2"
-        value={date}
-        onChange={(e) => setDate(e.target.value)}
-      />
+        <input
+          type="date"
+          className="w-full border border-gray-300 px-2 py-1.5 focus:border-black focus:outline-none"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
 
-      <select
-        className="border p-2"
-        value={type}
-        onChange={(e) => setType(e.target.value as any)}
-      >
-        <option value="EVENT">イベント</option>
-        <option value="CONTEST">大会</option>
-      </select>
+        <select
+          className="w-full border border-gray-300 px-2 py-1.5 focus:border-black focus:outline-none"
+          value={type}
+          onChange={(e) => setType(e.target.value as any)}
+        >
+          <option value="EVENT">イベント</option>
+          <option value="CONTEST">大会</option>
+        </select>
 
-      <button
-        onClick={submit}
-        className="rounded bg-blue-600 px-4 py-2 text-white"
-      >
-        追加
-      </button>
-      <div>
-        <h1>Task 管理</h1>
+        <button
+          onClick={submit}
+          className="w-full border border-black bg-black py-1.5 text-white transition hover:bg-white hover:text-black"
+        >
+          追加
+        </button>
+      </section>
 
-        <ul>
-          {tasks.map((task) => (
-            <li key={task.id}>
-              {task.title}
+      {/* ===== Task管理 ===== */}
+      <section className="space-y-3 border border-gray-200 p-4">
+        <h1 className="text-base font-semibold">Task 管理</h1>
 
-              <Link href={`/admin/tasks/${task.id}`}>
-                <button>編集</button>
-              </Link>
-
-              <button
-                onClick={async () => {
-                  if (!confirm("削除しますか？")) return;
-
-                  await fetch(`/api/admin/tasks/${task.id}`, {
-                    method: "DELETE",
-                  });
-
-                  // ローカル state を更新してリロードを避ける
-                  setTasks((prev) => prev.filter((t) => t.id !== task.id));
-                }}
+        {tasks.length === 0 ? (
+          <p className="text-gray-500">Taskはまだありません</p>
+        ) : (
+          <ul className="divide-y divide-gray-200">
+            {tasks.map((task) => (
+              <li
+                key={task.id}
+                className="flex items-center justify-between py-2"
               >
-                削除
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
+                <span>{task.title}</span>
+
+                <div className="flex gap-2">
+                  <Link href={`/admin/tasks/${task.id}`}>
+                    <button className="border border-black px-2 py-0.5 text-xs hover:bg-black hover:text-white">
+                      編集
+                    </button>
+                  </Link>
+
+                  <button
+                    onClick={async () => {
+                      if (!confirm("削除しますか？")) return;
+
+                      await fetch(`/api/admin/tasks/${task.id}`, {
+                        method: "DELETE",
+                      });
+
+                      setTasks((prev) => prev.filter((t) => t.id !== task.id));
+                    }}
+                    className="border border-gray-300 px-2 py-0.5 text-xs text-red-600 hover:border-red-600"
+                  >
+                    削除
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+      <section>
+        <input
+          type="date"
+          className="border p-2"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
+      </section>
     </div>
   );
 }

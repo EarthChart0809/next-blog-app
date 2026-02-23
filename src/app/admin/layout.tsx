@@ -1,33 +1,35 @@
-"use client";
+import { ReactNode } from "react";
+import { redirect } from "next/navigation";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-import React from "react";
-import { useAuth } from "@/app/_hooks/useAuth";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-
-interface Props {
-  children: React.ReactNode;
-}
-const AdminLayout = ({ children }: Props) => {
-  const router = useRouter();
-  const { isLoading, session } = useAuth();
-
-  useEffect(() => {
-    // 認証状況の確認中は何もせずに戻る
-    if (isLoading) {
-      return;
-    }
-    // 認証確認後、未認証であればログインページにリダイレクト
-    if (session === null) {
-      router.replace("/login");
-    }
-  }, [isLoading, router, session]);
-
-  // 認証済みが確認できるまでは何も表示しない
-  if (!session) {
-    return null;
-  }
-  return <>{children}</>;
+type Props = {
+  children: ReactNode;
 };
 
-export default AdminLayout;
+export default async function AdminLayout({ children }: Props) {
+  const supabase = await createSupabaseServerClient();
+
+  // セッション取得
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // 未ログイン
+  if (!user) {
+    redirect("/login");
+  }
+
+  // プロフィール取得
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("member_role")
+    .eq("id", user.id)
+    .single();
+
+  // 重役以外は弾く
+  if (!["executive", "mechanism", "program", "circuit"].includes(profile?.member_role || "")) {
+    redirect("/dashboard");
+  }
+
+  return <>{children}</>;
+}
