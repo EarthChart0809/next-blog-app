@@ -113,6 +113,6 @@ https://next-blog-app-fukaken.vercel.app/
   - モバイル UX 改善、アクセシビリティ向上
 
 
-## 連絡先（任意）
+## 連絡先
 
 https://earthchart0809.github.io/Portfolio/
