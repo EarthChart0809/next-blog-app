@@ -101,6 +101,8 @@ https://next-blog-app-fukaken.vercel.app/
 - Next.js の Server / Client コンポーネント混在環境での認証設計（createServerClient を用いたサーバー側認証と、クライアント側 useAuth/isLoading 待ちの両立）。
 - Supabase の RLS に対応するため、管理操作は service_role キーを使ったサーバー API 経由にする等の設計を採用。
 - 七セグ表示やカレンダー連携など、視覚的に情報を分かりやすく提示する UI を実装。
+- Supabase Auth と Next.js App Router を組み合わせた認証設計において、
+サインアップ直後のセッション未確定状態や RLS 制約を考慮した安全なプロフィール生成フローを構築した。
 
 ## 既知の課題と今後の展望
 
