@@ -86,7 +86,7 @@ export default function JoinPage() {
 
         <div className="mt-4 space-y-2">
           <a
-            href="https://your-github-pages-url"
+            href="https://earthchart0809.github.io/Fukaken_education/"
             target="_blank"
             rel="noopener noreferrer"
             className="block rounded-lg border border-gray-200 p-4 text-sm transition hover:bg-gray-50"
